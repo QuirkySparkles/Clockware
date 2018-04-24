@@ -1,0 +1,15 @@
+{
+    "name": "clockserver",
+    "version": "0.0.1",
+    "scripts": {
+        "dev": "nodemon clockserver.js"
+    },
+    "dependencies": {
+        "axios": "^0.18.0",
+        "body-parser": "^1.18.2",
+        "express": "^4.16.3"
+    },
+    "devDependencies": {
+        "nodemon": "^1.17.3"
+    }
+}
