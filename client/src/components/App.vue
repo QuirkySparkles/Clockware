@@ -1,6 +1,6 @@
 <template>
     <div id="mainForm">
-        <form method="post">
+        <form>
             <label>Имя</label><br>
             <input type="text" minlength="3" v-model.lazy.trim="name" class="mainform" required><br><br>
             <label>Email</label><br>
@@ -21,13 +21,14 @@
             <select v-model="orderTime">
                 <option v-for="time in times">{{time}}:00</option>          
             </select><br>
-            <input type="submit" value="Оформить заказ">
         </form>
-        <button v-on:click="gatherData">Test input</button>
+        <button v-on:click="gatherData">Отправить данные</button>
     </div>
 </template>
 
 <script>
+    import axios from 'axios';
+    
     function InputError(property) {
         Error.call(this, property);
         this.name = "InputError";
@@ -36,6 +37,10 @@
         this.stack = (new Error()).stack;
     }
     InputError.prototype = Object.create(Error.prototype);
+    
+    var instance = axios.create({
+        baseURL: 'http://localhost:8081'
+    });
     
     export default {
         name: "app",
@@ -93,7 +98,13 @@
                         orderDate: this.orderDate,
                         orderTime: this.orderTime
                     }
-                    console.log(JSON.stringify(client));
+                    instance.post("/", client)
+                        .then(function (response) {
+                            console.log(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                     }
                 }
                 catch(err) {
