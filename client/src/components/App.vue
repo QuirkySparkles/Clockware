@@ -22,12 +22,22 @@
                 <option v-for="time in times">{{time}}:00</option>          
             </select><br>
         </form>
-        <button v-on:click="gatherData">Отправить данные</button>
+        <button v-on:click="checkAvailability">Проверить наличие мастеров</button>
+        <div>
+            <p v-if="list[0]">Выберите мастера из списка:</p>
+            <masterlist v-bind:list="list"
+                        v-bind:chooseidfn="chooseId"></masterlist>
+        </div>
+        <p v-if="!list[0] && visible">К сожалению, на данное время нет свободных мастеров.</p>
+        <button v-if="masterId"
+                v-on:click="sendData"
+                v-bind:disabled="disabled">Оформить заказ</button>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
+    import masterlist from "./masterlist.vue";
     
     function InputError(property) {
         Error.call(this, property);
@@ -53,9 +63,18 @@
                 city: 'Днепр',
                 orderDate: '',
                 times: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
-                orderTime: '10:00'
+                orderTime: '10:00',
+                masterId: '',
+                list: [],
+                visible: false,
+                disabled: false
             }
         },
+        
+        components: {
+            masterlist
+        },
+        
         methods: {
             checkName: function() {
                 var template = /^[A-Za-zА-Яа-я]+$/;
@@ -65,6 +84,7 @@
                 }
                 return true;
             },
+            
             checkDate: function() {
                 var today = new Date();
                 if((this.orderDate.slice(0, 4) - today.getFullYear()) > 1) {
@@ -79,6 +99,7 @@
                 }
                 return true;
             },
+            
             checkEmail: function() {
                 var template = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/;
                 if(this.email.length < 7 || !this.email.match(template) ) {
@@ -87,26 +108,66 @@
                 }
                 return true;
             },
-            gatherData: function() {
+            
+            checkAvailability: function() {
+                try {
+                    if(this.checkDate()) {
+                        var requiredData = {
+                            clocksize: this.clocksize,
+                            city: this.city,
+                            orderDate: this.orderDate,
+                            orderTime: this.orderTime
+                        }
+                        instance.post("/check", requiredData)
+                            .then(response => {
+                                if(response.data[0]) {
+                                    this.list = response.data;
+                                    this.visible = false;
+                                }
+                                else this.visible = true;
+                            })
+                            .catch( function(error) {
+                                console.log(error);
+                            });
+                        }
+                    }
+                catch(err) {
+                    if(err.property == "date")
+                        alert(err.message + ": Дата/Время.");
+                    else 
+                        alert('A global error occured:' + err.property + ' ' + err.stack);
+                }
+            },
+            
+            chooseId: function(value) {
+                this.masterId = value;
+            },
+            
+            sendData: function() {
                 try {
                     if(this.checkName() && this.checkEmail() && this.checkDate()) {
-                    var client = {
-                        name: this.name,
-                        email: this.email,
-                        clocksize: this.clocksize,
-                        city: this.city,
-                        orderDate: this.orderDate,
-                        orderTime: this.orderTime
+                        
+                        var client = {
+                            name: this.name,
+                            email: this.email,
+                            clocksize: this.clocksize,
+                            city: this.city,
+                            orderDate: this.orderDate,
+                            orderTime: this.orderTime,
+                            masterId: this.masterId
+                        }
+                        this.disabled = true;
+                        instance.post("/register", client)
+                            .then(response => {
+                                if(response.data == 'ok')
+                                    alert('Ваш заказ был успешно оформлен!')
+                            })
+                            .catch( function(error) {
+                                this.disabled = false;
+                                console.log(error);
+                            });
+                        }
                     }
-                    instance.post("/", client)
-                        .then(function (response) {
-                            console.log(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-                    }
-                }
                 catch(err) {
                     if(err.property == "name")
                         alert(err.message + ": Имя.");
