@@ -120,14 +120,16 @@
                         }
                         instance.post("/check", requiredData)
                             .then(response => {
-                                if(response.data[0]) {
+                                if(response.data[0] && response.data != "DB error") {
                                     this.list = response.data;
                                     this.visible = false;
                                 }
+                                else if(response.data == "DB error") alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
                                 else this.visible = true;
                             })
                             .catch( function(error) {
                                 console.log(error);
+                                alert(error.message);
                             });
                         }
                     }
@@ -160,11 +162,20 @@
                         instance.post("/register", client)
                             .then(response => {
                                 if(response.data == 'ok')
-                                    alert('Ваш заказ был успешно оформлен!')
+                                    alert('Ваш заказ был успешно оформлен!');
+                                else if(response.data == "Email error") {
+                                    alert("Введен некорректный Email!");
+                                    this.disabled = false;
+                                }
+                                else {
+                                    alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
+                                    this.disabled = false;
+                                }
                             })
                             .catch( function(error) {
                                 this.disabled = false;
                                 console.log(error);
+                                alert(error.message);
                             });
                         }
                     }
