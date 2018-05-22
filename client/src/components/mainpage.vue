@@ -20,21 +20,21 @@
             <label>Большие</label><br><br>
             <label>Город</label><br>
             <select v-model="city">
-                <option v-for="city in cities">{{city}}</option>          
+                <option v-for="city in cities">{{city}}</option>
             </select><br><br>
             <label>Выберите удобную дату и время</label><br>
             <input type="date" v-model="orderDate" required>
             <select v-model="orderTime">
                 <option v-for="time in times">{{time}}:00</option>          
             </select><br>
-        </form>
+        </form><br>
         <button v-on:click="checkAvailability">Проверить наличие мастеров</button>
         <div>
-            <p v-if="list[0]">Выберите мастера из списка:</p>
-            <masterlist v-bind:list="list"
+            <p v-if="maslist[0]">Выберите мастера из списка:</p>
+            <masterlist v-bind:maslist="maslist"
                         v-bind:chooseidfn="chooseId"></masterlist>
         </div>
-        <p v-if="!list[0] && visible">К сожалению, на данное время нет свободных мастеров.</p>
+        <p v-if="!maslist[0] && visible">К сожалению, на данное время нет свободных мастеров.</p>
         <button v-if="masterId"
                 v-on:click="sendData"
                 v-bind:disabled="disabled">Оформить заказ</button>
@@ -45,7 +45,6 @@
     import axios from 'axios';
     import masterlist from "./masterlist.vue";
     import adminform from "./adminform.vue";
-    import eventBus from './event-bus.js';
     
     function InputError(property) {
         Error.call(this, property);
@@ -73,10 +72,11 @@
                 times: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                 orderTime: '10:00',
                 masterId: '',
-                list: [],
+                maslist: [],
                 visible: false,
                 disabled: false,
-                isActive: false
+                isActive: false,
+                authorized: false
             }
         },
         
@@ -130,16 +130,15 @@
                         }
                         connection.post("/check", requiredData)
                             .then(response => {
-                                if(response.data[0] && response.data != "DB error") {
-                                    this.list = response.data;
+                                if(response.data[0]) {
+                                    this.maslist = response.data;
                                     this.visible = false;
                                 }
-                                else if(response.data == "DB error") alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
                                 else this.visible = true;
                             })
-                            .catch( function(error) {
+                            .catch( error => {
                                 console.log(error);
-                                alert(error.message);
+                                alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
                             });
                         }
                     }
@@ -170,22 +169,16 @@
                         }
                         this.disabled = true;
                         connection.post("/register", client)
-                            .then(response => {
-                                if(response.data == 'ok')
-                                    alert('Ваш заказ был успешно оформлен!');
-                                else if(response.data == "Email error") {
-                                    alert("Введен некорректный Email!");
-                                    this.disabled = false;
-                                }
-                                else {
-                                    alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
-                                    this.disabled = false;
-                                }
-                            })
-                            .catch( function(error) {
+                            .then(response => alert('Ваш заказ был успешно оформлен! На Вашу почту было отправлено письмо с деталями заказа.') )
+                            .catch( error => {
                                 this.disabled = false;
                                 console.log(error);
-                                alert(error.message);
+                                if(error.response) {
+                                    if(error.response.status == 400)
+                                        alert("Вы ввели некорректный Email!");
+                                    else(error.response.status == 500)
+                                        alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
+                                }
                             });
                         }
                     }
