@@ -1,20 +1,19 @@
 <template>
     <div class="adminform" v-bind:class="{active: isActive}">
-        <form action="/admin">
+        <form id="admform">
             <label>Логин:</label>
             <input class="adminlogin"
                    v-model.lazy.trim="login" required><br>
             <label>Пароль:</label>
             <input type="password"
                    v-model.lazy.trim="password" required><br>
-            <button v-on:click="authorize">Войти</button>
         </form>
+        <button v-on:click="authorize">Войти</button>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-    import eventBus from './event-bus.js';
 
     var connection = axios.create({
         baseURL: 'http://localhost:8081'
@@ -24,8 +23,8 @@
         name: "adminform",
         data: function() {
             return {
-                login: '',
-                password: ''
+                login: "",
+                password: ""
             }
         },
 
@@ -33,7 +32,10 @@
         
         methods: {
             authorize: function() {
-                if(!this.login || !this.password) alert("Вы не ввели логин/пароль.");
+                if(!this.login || !this.password) {
+                    alert("Вы не ввели логин/пароль.");
+                    return;
+                }
                 connection({
                     url: '/auth',
                     method: 'post',
@@ -45,10 +47,17 @@
                 })
                 .then(response => {
                     console.log('Authorizing');
+                    this.$router.push("/admin");
                 })
-                .catch( function(error) {
+                .catch( error => {
                     console.log(error);
-                    alert(error.message);
+                    this.login = "";
+                    this.password = "";
+                    if(error.response) {
+                        if(error.response.status === 400)
+                            alert("Неверный логин или пароль.");
+                        else alert("Произошла ошибка на сервере, попробуйте повторить запрос позже.");
+                    }
                 });
             }
         }
