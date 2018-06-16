@@ -1,7 +1,7 @@
 {
     "name": "clockwork",
     "description": "Clockwork client application",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "author": "Dmitry",
     "scripts": {
         "dev": "webpack-dev-server --hot --open",
@@ -19,7 +19,9 @@
         "axios": "^0.18.0",
         "babel-loader": "^7.1.4",
         "css-loader": "^0.28.7",
+        "file-loader": "^1.1.11",
         "html-webpack-plugin": "^3.2.0",
+        "style-loader": "^0.21.0",
         "vue-loader": "^13.5.0",
         "vue-template-compiler": "^2.5.9",
         "webpack": "^3.9.0",
