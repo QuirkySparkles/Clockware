@@ -23,5 +23,6 @@ clockserver.use(require('./routes/check'));
 clockserver.use(require('./routes/register'));
 clockserver.use(require('./routes/auth'));
 clockserver.use(require('./routes/admin'));
+clockserver.use(require('./routes/loadcity'));
 
 clockserver.listen(8081);

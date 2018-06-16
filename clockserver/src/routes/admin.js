@@ -85,7 +85,7 @@ router.route("/orders")
         if(request.body.clocksize[0] == "м") request.body.clocksize = "s";
         else if(request.body.clocksize[0] == "с") request.body.clocksize = "m";
         else request.body.clocksize = "l";
-        sql.query('UPDATE orders SET city = ?, master_id = ?, clocksize = ?, order_date = ?, order_time = ? WHERE number = ?', [request.body.city, request.body.master_id, request.body.clocksize, request.body.order_date, request.body.order_time, request.body.number], function (err, results, fields) {
+        sql.query('UPDATE orders SET city = ?, client_email = ?, master_id = ?, clocksize = ?, order_date = ?, order_time = ? WHERE number = ?', [request.body.city, request.body.client_email, request.body.master_id, request.body.clocksize, request.body.order_date, request.body.order_time, request.body.number], function (err, results, fields) {
             if(err) {
                 console.log(err);
                 response.sendStatus(500);
