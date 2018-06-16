@@ -7,7 +7,9 @@ function resolve (dir) {
 
 module.exports = {
     context: path.resolve(__dirname, './'),
-    entry: './src/main.js',
+    entry: {
+        client: ['./src/main.js', './style.css'],
+    },
     output: {
         path: path.resolve(__dirname, './dist'),
         publicPath: '/',
@@ -16,7 +18,7 @@ module.exports = {
     devServer: {
         contentBase: '/',
         historyApiFallback: {
-            index: "/"
+            index: '/'
         }
     },
     module: {
@@ -29,6 +31,24 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader'
+            },
+            
+            {
+                test: /\.css$/,
+                use: [
+                        { loader: 'style-loader' },
+                        { loader: 'css-loader' }
+                     ]
+            },
+            
+            {
+                test: /\.(png|ipg|gif|svg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {}
+                    }
+                ]
             }
         ]
     }, 
@@ -39,11 +59,12 @@ module.exports = {
             '@': resolve('src')
         }
     },
+    
     plugins: [
         new HtmlWebpackPlugin({
-            file: 'index.html',
             template: 'index.html',
             inject: true
         })
     ]
+    
 };
