@@ -10,7 +10,7 @@
             <adminform v-bind:isActive="isActive" ref="cleanState"></adminform>
         </div>
     </div>
-    <img :src="require('../../assets/logo.png')" v-on:click="refresh">
+    <router-link to="/"><img :src="require('../../assets/logo.png')"></router-link>
     <div class="layout-content" v-if="!isDone">
         <div class="tip">Для того чтобы оставить заказ, просто заполните форму ниже.</div>
         <div class="layout-form">

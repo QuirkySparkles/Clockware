@@ -46,10 +46,6 @@ export default {
     },
 
     methods: {
-        refresh: function() {
-            this.$router.go(this.$router.currentRoute);
-        },
-
         clean: function() {
             this.$refs.cleanState.isEmpty = false;
             this.$refs.cleanState.logWarning = false;
@@ -60,7 +56,7 @@ export default {
                 .then(response => {
                     this.cities = response.data;
                 })
-                .catch( error => console.log(error.message));
+                .catch( error => alert(error.message));
         },
 
         checkName: function() {
@@ -168,7 +164,7 @@ export default {
                             this.disabled = false;
                             if(error.response) {
                                 if(error.response.status == 400)
-                                    alert("Вы ввели некорректный Email!");
+                                    this.emailWarning = true;
                                 else(error.response.status == 500)
                                     alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
                             }

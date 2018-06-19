@@ -33,16 +33,19 @@ export default {
                 withCredentials: true
             })
             .then(response => {
-                this.$router.go(this.$router.push("/admin"));
+                if(response.status == 200)
+                    this.$router.go(this.$router.push("/admin"));
             })
             .catch( error => {
-                this.login = "";
-                this.password = "";
                 if(error.response) {
-                    if(error.response.status === 400)
+                    if(error.response.status === 400) {
+                        this.login = "";
+                        this.password = "";
                         this.logWarning = true;
+                    }
                     else alert("Произошла ошибка на сервере, попробуйте повторить запрос позже.");
                 }
+                else alert("Произошла ошибка на сервере, либо же возникли проблемы с соединением.");
             });
         }
     }

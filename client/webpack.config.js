@@ -1,5 +1,8 @@
+var webpack = require('webpack');
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -64,7 +67,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'index.html',
             inject: true
-        })
+        }),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+        }),
+        new UglifyJSPlugin(),
+        new OptimizeCSSAssetsPlugin({})
     ]
-    
 };

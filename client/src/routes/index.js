@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import mainPage from '../components/mainpage.vue';
+import mainpage from '../components/mainpage.vue';
 import admin from '../components/admin.vue';
 import masters from '../components/masters.vue';
 import clients from '../components/clients.vue';
 import cities from '../components/cities.vue';
 import reservations from '../components/reservations.vue';
+import notFound from '../components/NotFound.vue'
 
 Vue.use(Router)
 
@@ -15,7 +16,13 @@ export default new Router({
         {
             path: '/',
             name: 'Main',
-            component: mainPage
+            component: mainpage
+        },
+        
+        {
+            path: '*',
+            name: 'NotFound',
+            component: notFound
         },
     
         {

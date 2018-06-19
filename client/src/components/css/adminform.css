@@ -38,6 +38,16 @@
     position: absolute;
     top: 75px;
     right: 35px;
+    width: 50px;
+    background: #7fffbb;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logbut:active {
+    background: #60c18e;
 }
 
 .adminform .adminlogin {
