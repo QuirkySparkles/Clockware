@@ -33,8 +33,12 @@ export default {
                 withCredentials: true
             })
             .then(response => {
-                if(response.status == 200)
+                if(response.status == 200) {
+                    var token = response.headers.authorization;
+                    token = token.slice( token.indexOf(' ') + 1 ) + ';';
+                    document.cookie = "access_token=" + token;
                     this.$router.go(this.$router.push("/admin"));
+                }
             })
             .catch( error => {
                 if(error.response) {

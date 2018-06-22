@@ -10,6 +10,7 @@ export default {
         return {
             toDelete: [],
             number: 0,
+            confirmation: true,
             clocksize: ["маленькие", "средние", "большие"],
             times: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
             toEdit: {

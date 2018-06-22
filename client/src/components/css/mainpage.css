@@ -168,6 +168,10 @@ label:hover .tooltiptext {
     opacity: 1;
 }
 
+.layout-form form {
+    padding-bottom: 10px;
+}
+
 .layout-form input {
     position: relative;
     top: 2px;
@@ -211,7 +215,7 @@ label:hover .tooltiptext {
     border-radius: 10px;
     background: #FEEF88;
     border: 2px solid #F0FEA9;
-    animation: tip-appearance 1.5s;
+    animation: tip-appearance 1s;
 }
 
 .layout-list p {

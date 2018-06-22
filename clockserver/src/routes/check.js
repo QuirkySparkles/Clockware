@@ -2,11 +2,11 @@ var express = require("express");
 var router = express.Router();
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
-var sql = require('../db');
+var db = require('../db');
 
 router.post("/check", jsonParser, function (request, response, next) {
     var newRequest = prepareNewRequest(request.body.orderTime, request.body.clocksize);
-    sql.query('SELECT order_time, master_id, clocksize FROM orders WHERE city = ? AND order_date = ?', [request.body.city, request.body.orderDate],
+    db.connection.query('SELECT order_time, master_id, clocksize FROM orders WHERE city = ? AND order_date = ?', [request.body.city, request.body.orderDate],
         function (err, results, fields) {
             if (err) {
                 console.log(err);
@@ -19,7 +19,7 @@ router.post("/check", jsonParser, function (request, response, next) {
 },
     function (request, response) {
         if (!request.lockedMasters) {
-            sql.query('SELECT * FROM masters WHERE city = ?', [request.body.city], 
+            db.connection.query('SELECT * FROM masters WHERE city = ?', [request.body.city], 
                 function (err, results, fields) {
                     if (err) {
                         console.log(err);
@@ -27,7 +27,7 @@ router.post("/check", jsonParser, function (request, response, next) {
                     }
                     else response.json(results);
                 });
-        } else { sql.query('SELECT * FROM masters WHERE city = ? AND id NOT in (?)', [request.body.city, request.lockedMasters],
+        } else { db.connection.query('SELECT * FROM masters WHERE city = ? AND id NOT in (?)', [request.body.city, request.lockedMasters],
             function (err, results, fields) {
                 if (err) {
                     console.log(err);

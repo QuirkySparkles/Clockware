@@ -5,13 +5,14 @@
     "author": "Dmitry",
     "scripts": {
         "dev": "webpack-dev-server --hot --open",
-        "build": "webpack"
+        "build": "webpack",
+        "start": "node server.js"
     },
     "dependencies": {
         "axios": "^0.18.0",
         "babel-core": "^6.26.3",
         "babel-loader": "^7.1.4",
-        "eslint": "^4.19.1",
+        "connect-history-api-fallback": "^1.5.0",
         "optimize-css-assets-webpack-plugin": "^3.2.0",
         "uglifyjs-webpack-plugin": "^1.2.5",
         "vue": "^2.5.0",
@@ -22,6 +23,7 @@
         "babel-loader": "^7.1.4",
         "css-loader": "^0.28.7",
         "file-loader": "^1.1.11",
+        "eslint": "^4.19.1",
         "html-webpack-plugin": "^3.2.0",
         "style-loader": "^0.21.0",
         "vue-loader": "^13.5.0",

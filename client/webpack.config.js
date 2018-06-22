@@ -5,13 +5,13 @@ var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 function resolve (dir) {
-  return path.join(__dirname, '..', dir)
+  return path.join(__dirname, '..', dir);
 }
 
 module.exports = {
     context: path.resolve(__dirname, './'),
     entry: {
-        client: ['./src/main.js', './style.css'],
+        client: ['./src/main.js', './style.css']
     },
     output: {
         path: path.resolve(__dirname, './dist'),
@@ -54,7 +54,7 @@ module.exports = {
                 ]
             }
         ]
-    }, 
+    },
     resolve: {
         extensions: ['.js', '.vue', '.json'],
         alias: {
@@ -69,7 +69,7 @@ module.exports = {
             inject: true
         }),
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production')
+            'process.env.NODE_ENV': JSON.stringify('development')
         }),
         new UglifyJSPlugin(),
         new OptimizeCSSAssetsPlugin({})

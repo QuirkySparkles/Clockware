@@ -34,6 +34,7 @@ export default {
             disabled: false,
             isActive: false,
             isDone: false,
+            isWarning: false,
             nameWarning: false,
             emailWarning: false,
             dateWarning: false
@@ -56,7 +57,7 @@ export default {
                 .then(response => {
                     this.cities = response.data;
                 })
-                .catch( error => alert(error.message));
+                .catch( error => console.log(error.message));
         },
 
         checkName: function() {
@@ -108,6 +109,7 @@ export default {
                     this.dateWarning = false;
                     connection.post("/check", requiredData)
                         .then(response => {
+                            this.isWarning = false;
                             if(response.data[0]) {
                                 this.maslist = [];
                                 this.maslist = response.data;
@@ -120,7 +122,7 @@ export default {
                         })
                         .catch( error => {
                             console.log(error);
-                            alert("Ошибка при обращении к базе данных, попробуйте ещё раз позже.");
+                            this.isWarning = true;
                         });
                     }
                 }

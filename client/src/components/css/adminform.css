@@ -39,15 +39,15 @@
     top: 75px;
     right: 35px;
     width: 50px;
-    background: #7fffbb;
+    background: #83d5fc;
     text-align: center;
     padding: 2px;
-    border-radius: 5px;
+    border-radius: 3px;
     cursor: pointer;
 }
 
 .logbut:active {
-    background: #60c18e;
+    background: #67a8c6;
 }
 
 .adminform .adminlogin {

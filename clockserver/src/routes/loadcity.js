@@ -1,9 +1,9 @@
 var express = require("express");
 var router = express.Router();
-var sql = require('../db');
+var db = require('../db');
 
 router.get("/loadcity", function(request, response) {
-    sql.query("SELECT * FROM cities", function(err, results, fields) {
+    db.connection.query("SELECT * FROM cities", function(err, results, fields) {
             if(err) {
                 console.log(err);
                 response.sendStatus(500);

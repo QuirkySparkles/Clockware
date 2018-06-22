@@ -2,7 +2,7 @@ var express = require("express");
 var clockserver = express(),
     mailer = require("express-mailer");
 var router = express.Router();
-var sql = require('../db');
+var db = require('../db');
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 
@@ -13,8 +13,8 @@ mailer.extend(clockserver, {
     port: 465,
     transportMethod: "SMTP",
     auth: {
-        user: "",
-        pass: ""
+        user: process.env.MAILER_USER,
+        pass: process.env.MAILER_PASS
     }
 });
 
@@ -30,12 +30,12 @@ router.post("/register", jsonParser, function (request, response, next) {
         checkEmail(request, response, next);
     },
     function (request, response, next) {
-        sql.query("INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?, ?)", [request.orderCount, request.body.email, request.body.city, request.body.masterId, request.body.clocksize[0], request.body.orderDate, request.body.orderTime], function (err, results, fields) {
+        db.connection.query("INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?, ?)", [request.orderCount, request.body.email, request.body.city, request.body.masterId, request.body.clocksize[0], request.body.orderDate, request.body.orderTime], function (err, results, fields) {
             if (err) {
                 console.log(err);
                 response.sendStatus(500);
             }
-            console.log("Order inserted!");
+            console.log("Order from client " + request.body.email + " inserted!");
             next();
         });
     },
@@ -43,27 +43,26 @@ router.post("/register", jsonParser, function (request, response, next) {
         clockserver.mailer.send("email", prepareEmailForm(request), function (err) {
             if (err) {
                 console.log(err);
-                //response.sendStatus(400);
             }
             if (request.newClient) next();
             else response.sendStatus(200);
         });
     },
     function (request, response) {
-        sql.query("INSERT INTO clients VALUES (?, ?, ?, ?, ?, ?)",
+        db.connection.query("INSERT INTO clients VALUES (?, ?, ?, ?, ?, ?)",
             [request.clientCount, request.body.name, request.body.email, request.body.clocksize[0], request.body.city, request.body.orderDate],
             function (err, results, fields) {
                 if (err) {
                     console.log(err);
                     response.sendStatus(500);
                 }
-                console.log("Client inserted!");
+                console.log("Client " + request.body.email + " inserted!");
             });
         response.sendStatus(200);
     });
 
 function checkLength(request, response, next) {
-    sql.query("SELECT (SELECT COUNT(*) FROM orders) as orders, (SELECT COUNT(*) FROM clients) as clients", function(err, results, fields) {
+    db.connection.query("SELECT (SELECT COUNT(*) FROM orders) as orders, (SELECT COUNT(*) FROM clients) as clients", function(err, results, fields) {
             if (err) {
                 console.log(err);
                 response.sendStatus(500);
@@ -77,7 +76,7 @@ function checkLength(request, response, next) {
 function checkEmail(request, response, next) {
     var template = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/;
     if(!request.body.email.match(template)) response.sendStatus(400);
-    sql.query("SELECT email FROM clients as email", 
+    db.connection.query("SELECT email FROM clients as email", 
         function(err, results, fields) {
             if (err) {
                 console.log(err);

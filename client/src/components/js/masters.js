@@ -10,6 +10,7 @@ export default {
         return {
             toDelete: [],
             number: 0,
+            confirmation: true,
             ratings: [0, 1, 2, 3, 4, 5],
             toEdit: {
                 id: 0,

@@ -22,14 +22,14 @@
                 <div class="f-td">
                     <div class="icon-wrapper">
                         <img class="edit-icon" :src="require('../../assets/edit.svg')"
-                             v-on:click="number=instance.number, editRecord()"
+                             v-on:click="number=instance.number, editRecord(), confirmation=false"
                              v-bind:disabled="isDisabled"title="Редактировать">
                     </div>
                 </div>
                 <div class="f-td">
                     <input class="delbox" type="checkbox" 
                             v-bind:value="instance.number" 
-                            v-model="toDelete" title="Выделить">
+                            v-model="toDelete" v-on:click="confirmation=true" title="Выделить">
                 </div>
             </div>
         </div>
@@ -68,6 +68,9 @@
                                 isDisabled=false, errorField=''">Отмена</button>
             <button v-on:click="acceptChanges('clients')">Внести изменения</button>
         </div>
-    <button v-show="toDelete[0]"
-            v-on:click="deleteRecord('clients')">Удалить выбранные записи</button>
+    <div class="delete-prop" v-show="toDelete[0] && confirmation">
+        <span>Удалить выбранные записи?</span><br>
+        <button v-on:click="deleteRecord('clients')">Да</button>
+        <button v-on:click="confirmation=false">Нет</button>
+    </div>
 </div>

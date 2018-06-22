@@ -5,10 +5,18 @@ var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 var bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
+var mode = process.env.NODE_ENV;
+var generator = require ("./generator.js");
+var address;
+
+if(mode == 'development') 
+    address = 'http://localhost:8080';
+else address = 'https://clockwise-clockware.herokuapp.com';
 
 var corsOptions = {
-    origin: 'http://localhost:8080',
-    credentials: true
+    origin: address,
+    credentials: true,
+    exposedHeaders: "Authorization"
 };
 
 router.post("/auth", cors(corsOptions), jsonParser, function (request, response, next) {
@@ -26,8 +34,9 @@ router.post("/auth", cors(corsOptions), jsonParser, function (request, response,
 },
     function (request, response) {
         if (!request.legit) return response.sendStatus(500);
-        var token = jwt.sign({ login: request.body.login }, "confidential");
-        response.cookie('access_token', token, { httpOnly: false }).send();
+        var token = jwt.sign({ login: request.body.login }, generator.generate() );
+        response.set("Authorization", 'Bearer ' + token);
+        response.sendStatus(200);
 });
 
 module.exports = router;

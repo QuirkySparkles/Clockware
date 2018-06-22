@@ -3,7 +3,7 @@
     <p v-show="!serverReply">Не могу отобразить список мастеров.</p>
     <p v-show="isEmpty && serverReply">Таблица пуста.</p>
     <button v-show="serverReply"
-            v-on:click="showForm=!showForm">Добавить мастера</button>
+            v-on:click="showForm=!showForm, confirmation=false">Добавить мастера</button>
     <div class="table-cover">
         <div class="f-table" v-show="!isEmpty">
             <div class="f-tr" v-show="!isEmpty && serverReply">
@@ -22,13 +22,14 @@
                 <div class="f-td">
                     <div class="icon-wrapper">
                         <img class="edit-icon" :src="require('../../assets/edit.svg')"
-                             v-on:click="number=instance.number, editRecord()"
+                             v-on:click="number=instance.number, editRecord(), confirmation=false"
                              v-bind:disabled="isDisabled"title="Редактировать">
                     </div>
                 </div>
                 <div class="f-td">
                     <input class="delbox" type="checkbox" 
-                            v-bind:value="instance.number" 
+                            v-bind:value="instance.number"
+                            v-on:click="confirmation=true"
                             v-model="toDelete" title="Выделить">
                 </div>
             </div>
@@ -103,6 +104,9 @@
                             isDisabled=false, errorField=''">Отмена</button>
         <button v-on:click="acceptChanges('masters')">Внести изменения</button>
     </div>
-    <button v-show="toDelete[0]"
-            v-on:click="deleteRecord('masters')">Удалить выбранные записи</button>
+    <div class="delete-prop" v-show="toDelete[0] && confirmation">
+        <span>Удалить выбранные записи?</span><br>
+        <button v-on:click="deleteRecord('masters')">Да</button>
+        <button v-on:click="confirmation=false">Нет</button>
+    </div>
 </div>
